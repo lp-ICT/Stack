@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="以互動操作學習堆疊 Stack、LIFO、Push（推入）、Pop（彈出）、Peek（查看）、Stack Overflow 與 Stack Underflow。">
+  <title>堆疊學習實驗室｜Stack Lab</title>
+  <style>
+    :root{--ink:#10233f;--muted:#53657e;--blue:#246bfd;--blue2:#174fc8;--cyan:#12b8c4;--yellow:#ffd84d;--red:#e84a5f;--green:#14a86c;--paper:#f7faff;--line:#dbe5f3;--shadow:0 14px 35px rgba(27,66,118,.13)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;background:linear-gradient(145deg,#eef6ff 0,#fbfdff 45%,#e8fbfa 100%);min-height:100vh}
+    button,input{font:inherit}button{cursor:pointer}.app{max-width:1180px;margin:auto;padding:22px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:13px}.logo{width:52px;height:52px;border-radius:17px;background:var(--ink);color:white;display:grid;place-items:center;font-weight:900;box-shadow:var(--shadow)}.logo span{border:3px solid var(--yellow);padding:1px 7px;border-radius:6px}.brand h1{font-size:clamp(1.35rem,3vw,2.1rem);margin:0}.brand p{margin:3px 0 0;color:var(--muted)}.progress-wrap{min-width:180px}.progress-label{display:flex;justify-content:space-between;font-size:.9rem;font-weight:800}.progress{height:10px;border-radius:99px;background:#dce8f5;overflow:hidden;margin-top:6px}.progress>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--blue));transition:.35s}
+    .tabs{display:flex;gap:8px;overflow:auto;padding:4px 2px 14px}.tab{border:1px solid var(--line);background:white;padding:11px 17px;border-radius:999px;font-weight:800;color:var(--muted);white-space:nowrap}.tab.active{color:white;background:var(--blue);border-color:var(--blue);box-shadow:0 7px 18px rgba(36,107,253,.25)}
+    .panel{display:none}.panel.active{display:block}.card{background:rgba(255,255,255,.96);border:1px solid rgba(211,225,242,.85);border-radius:24px;box-shadow:var(--shadow)}
+    .learn-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px}.intro{padding:clamp(24px,4vw,42px)}.eyebrow{color:var(--blue);font-size:.86rem;font-weight:900;letter-spacing:.08em}.intro h2{font-size:clamp(2rem,5vw,4.25rem);line-height:1.02;margin:12px 0 18px;letter-spacing:-.04em}.intro h2 em{font-style:normal;color:var(--blue)}.intro p{font-size:1.12rem;line-height:1.8;color:var(--muted)}.formula{margin-top:24px;background:var(--ink);color:white;padding:18px 20px;border-radius:18px;font-size:1.12rem}.formula b{color:var(--yellow);font-size:1.3rem}.example{padding:28px}.example h3{margin-top:0}.plates{display:flex;flex-direction:column-reverse;align-items:center;min-height:270px;justify-content:flex-start;padding:15px 10px;border-bottom:10px solid var(--ink);border-radius:0 0 16px 16px;background:linear-gradient(180deg,#effaff,white)}.plate{width:76%;height:48px;margin:3px;border-radius:50%;display:grid;place-items:center;color:white;font-weight:900;box-shadow:inset 0 -8px 0 rgba(0,0,0,.13)}.plate:nth-child(1){background:#246bfd}.plate:nth-child(2){background:#12b8c4}.plate:nth-child(3){background:#e84a5f}.tip{margin:18px 0 0;color:var(--muted);line-height:1.6}
+    .lab{display:grid;grid-template-columns:minmax(300px,1fr) minmax(320px,.9fr);gap:18px}.machine{padding:24px}.machine-head{display:flex;justify-content:space-between;align-items:start;gap:12px}.machine h2,.side h2,.quiz h2{margin:0 0 5px}.badge{background:#eaf0ff;color:var(--blue);padding:8px 12px;border-radius:99px;font-weight:900}.stack-stage{margin-top:18px;min-height:385px;border:2px dashed #b8cbe3;border-top:0;border-radius:0 0 22px 22px;padding:20px;display:flex;flex-direction:column-reverse;justify-content:flex-start;position:relative;background:linear-gradient(#f8fbff,#eef7ff)}.stack-stage:before{content:"TOP";position:absolute;right:13px;top:10px;font-size:.75rem;font-weight:900;color:#7890ad}.empty{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:#7890ad;font-weight:800;line-height:1.7}.item{width:100%;min-height:54px;margin:4px 0;background:linear-gradient(100deg,var(--blue),#6a77ff);border-radius:13px;color:white;display:flex;align-items:center;justify-content:space-between;padding:10px 17px;font-weight:900;font-size:1.15rem;box-shadow:0 7px 12px rgba(36,107,253,.2);animation:enter .28s ease}.item .pos{font-size:.78rem;opacity:.8}.item.top{outline:4px solid var(--yellow);outline-offset:2px}@keyframes enter{from{transform:translateY(-35px);opacity:0}to{transform:none;opacity:1}}@keyframes exit{to{transform:translateY(-38px);opacity:0}}
+    .controls{margin-top:18px;display:grid;grid-template-columns:1fr auto auto;gap:9px}.controls input{min-width:0;border:2px solid var(--line);border-radius:13px;padding:12px 14px;font-weight:700}.controls input:focus{outline:3px solid #bcd6ff;border-color:var(--blue)}.btn{border:0;border-radius:13px;padding:12px 16px;font-weight:900;background:var(--blue);color:white;box-shadow:0 5px 12px rgba(36,107,253,.2)}.btn:hover{background:var(--blue2)}.btn.secondary{background:white;color:var(--ink);border:2px solid var(--line);box-shadow:none}.btn.danger{background:var(--red)}.actions{display:flex;gap:9px;margin-top:9px}.message{min-height:48px;margin-top:14px;border-radius:13px;padding:12px 14px;background:#edf4ff;color:#28466f;font-weight:750}.message.error{background:#fff0f2;color:#ad2738}.message.ok{background:#e9fff5;color:#087548}
+    .side{padding:24px}.command-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:18px 0}.command{border:1px solid var(--line);border-radius:15px;padding:14px}.command code{color:var(--blue);font-weight:900;font-size:1rem}.command p{margin:6px 0 0;color:var(--muted);font-size:.9rem}.log{background:var(--ink);color:#cbe1ff;border-radius:17px;padding:15px;height:180px;overflow:auto;font-family:ui-monospace,monospace;line-height:1.7}.log div:last-child{color:var(--yellow)}.challenge{margin-top:17px;border:2px solid #dfe9f5;border-radius:17px;padding:16px}.challenge p{margin:7px 0 12px;line-height:1.55}.challenge-result{font-weight:900;min-height:25px;margin-top:10px}
+    .quiz{padding:clamp(22px,4vw,38px);max-width:860px;margin:auto}.qhead{display:flex;justify-content:space-between;align-items:center;gap:12px}.score{font-weight:900;color:var(--blue)}.question{font-size:clamp(1.25rem,3vw,1.7rem);font-weight:900;line-height:1.45;margin:28px 0 18px}.options{display:grid;gap:11px}.option{width:100%;text-align:left;background:white;border:2px solid var(--line);border-radius:15px;padding:15px 17px;color:var(--ink);font-weight:750}.option:hover{border-color:var(--blue);background:#f2f7ff}.option.correct{border-color:var(--green);background:#eafff5}.option.wrong{border-color:var(--red);background:#fff0f2}.feedback{min-height:64px;margin-top:16px;padding:14px;border-radius:14px;background:#eef5ff;line-height:1.5}.quiz-nav{display:flex;justify-content:flex-end;margin-top:14px}.finish{text-align:center;padding:20px}.finish .trophy{font-size:4rem}.finish h3{font-size:2rem;margin:8px}.finish p{color:var(--muted);line-height:1.7}.hidden{display:none!important}
+    .summary{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.summary .card{padding:24px}.summary .num{width:42px;height:42px;display:grid;place-items:center;border-radius:13px;background:var(--blue);color:white;font-weight:900}.summary h3{margin:15px 0 8px}.summary p{color:var(--muted);line-height:1.6;margin:0}.check{margin-top:18px;padding:25px}.check li{margin:12px 0;line-height:1.6}.footer{text-align:center;color:#6c7d94;padding:24px;font-size:.9rem}
+    @media(max-width:800px){header{align-items:flex-start;flex-direction:column}.progress-wrap{width:100%}.learn-grid,.lab{grid-template-columns:1fr}.summary{grid-template-columns:1fr}.intro h2{font-size:2.5rem}.controls{grid-template-columns:1fr 1fr}.controls input{grid-column:1/-1}.stack-stage{min-height:330px}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <div class="brand"><div class="logo"><span>S</span></div><div><h1>堆疊學習實驗室</h1><p>Stack Lab</p></div></div>
+    <div class="progress-wrap" aria-label="學習進度"><div class="progress-label"><span>學習進度</span><span id="progressText">0%</span></div><div class="progress"><i id="progressBar"></i></div></div>
+  </header>
+  <nav class="tabs" aria-label="學習部分">
+    <button class="tab active" data-tab="learn">① 認識堆疊</button>
+    <button class="tab" data-tab="lab">② 動手實驗</button>
+    <button class="tab" data-tab="quiz">③ 達標小測</button>
+    <button class="tab" data-tab="summary">④ 重點整理</button>
+  </nav>
+
+  <section id="learn" class="panel active">
+    <div class="learn-grid">
+      <article class="card intro"><div class="eyebrow">DATA STRUCTURE · 資料結構</div><h2>甚麼是<br><em>堆疊 Stack？</em></h2><p>堆疊像一疊餐盤：新餐盤只能放在最上面；要取餐盤，也只能先取最上面的一隻。</p><div class="formula"><b>後進先出 LIFO</b><br>Last In, First Out</div><button class="btn" style="margin-top:22px" onclick="openTab('lab')">開始動手實驗 →</button></article>
+      <article class="card example"><h3>看看這疊餐盤</h3><div class="plates" aria-label="餐盤堆疊示例"><div class="plate">① 最先放入</div><div class="plate">②</div><div class="plate">③ 最後放入／最先取出</div></div><p class="tip"><strong>想一想：</strong>如果再放入黃色餐盤，它會在哪裏？答案是最頂部，並且會成為下一隻被取出的餐盤。</p></article>
+    </div>
+  </section>
+
+  <section id="lab" class="panel">
+    <div class="lab">
+      <article class="card machine">
+        <div class="machine-head"><div><h2>互動堆疊</h2><span>容量：6 個項目</span></div><span class="badge" id="sizeBadge">Size: 0</span></div>
+        <div id="stackStage" class="stack-stage" aria-live="polite"><div id="emptyState" class="empty">堆疊目前是空的<br>輸入資料後按 PUSH（推入）</div></div>
+        <div class="controls"><input id="valueInput" maxlength="12" placeholder="輸入資料，例如 A" aria-label="要推入的資料"><button id="pushBtn" class="btn">PUSH 推入</button><button id="popBtn" class="btn danger">POP 彈出</button></div>
+        <div class="actions"><button id="peekBtn" class="btn secondary">PEEK 查看</button><button id="resetBtn" class="btn secondary">RESET 清空</button></div>
+        <div id="message" class="message">試試依次 Push（推入）A、B、C，然後按 Pop（彈出）。</div>
+      </article>
+      <aside class="card side">
+        <h2>四個重要操作</h2>
+        <div class="command-grid"><div class="command"><code>push(x)</code><p>推入：將 x 加到頂部</p></div><div class="command"><code>pop()</code><p>彈出：移除頂部資料</p></div><div class="command"><code>peek()</code><p>查看：讀取頂部資料</p></div><div class="command"><code>isEmpty()</code><p>是否沒有資料</p></div></div>
+        <h3>操作紀錄</h3><div id="log" class="log" aria-live="polite"><div>&gt; 等待操作……</div></div>
+        <div class="challenge"><strong>🎯 小挑戰</strong><p>先 RESET，再依次 Push（推入）「甲、乙、丙」，然後 Pop（彈出）一次。現在頂部是甚麼？</p><div><button class="btn secondary answer" data-answer="甲">甲</button> <button class="btn secondary answer" data-answer="乙">乙</button> <button class="btn secondary answer" data-answer="丙">丙</button></div><div id="challengeResult" class="challenge-result"></div></div>
+      </aside>
+    </div>
+  </section>
+
+  <section id="quiz" class="panel">
+    <article class="card quiz">
+      <div id="quizPlay"><div class="qhead"><div><h2>達標小測</h2><span>答錯可以再試，全部答對才完成</span></div><div class="score" id="score">0 / 6</div></div><div id="question" class="question"></div><div id="options" class="options"></div><div id="feedback" class="feedback">選擇一個答案。</div><div class="quiz-nav"><button id="nextBtn" class="btn hidden">下一題 →</button></div></div>
+      <div id="finish" class="finish hidden"><div class="trophy">🏆</div><h3>全部答對！</h3><p>你已掌握堆疊的 LIFO 規則，以及 Push（推入）、Pop（彈出）、Peek（查看）、Stack Overflow（堆疊溢位／溢出）和 Stack Underflow（堆疊下溢）。</p><button id="retryBtn" class="btn secondary">再做一次</button></div>
+    </article>
+  </section>
+
+  <section id="summary" class="panel">
+    <div class="summary"><article class="card"><div class="num">1</div><h3>只有一個出入口</h3><p>加入和移除資料都在堆疊頂部進行。</p></article><article class="card"><div class="num">2</div><h3>後進先出</h3><p>最後放入的資料，會最先被取出。</p></article><article class="card"><div class="num">3</div><h3>常見用途</h3><p>Undo、瀏覽器返回、函式呼叫及括號配對。</p></article></div>
+    <article class="card check"><h2>一分鐘溫習</h2><ul><li><strong>Push（推入）：</strong>在頂部加入資料。</li><li><strong>Pop（彈出）：</strong>移除並取得頂部資料。</li><li><strong>Peek（查看）：</strong>只查看頂部，不會移除資料。</li><li><strong>Stack Overflow（堆疊溢位／溢出）：</strong>堆疊已滿，仍嘗試推入資料。</li><li><strong>Stack Underflow（堆疊下溢）：</strong>堆疊為空，仍嘗試彈出資料。</li></ul></article>
+  </section>
+  <div class="footer">堆疊學習實驗室 · 可離線使用</div>
+</main>
+<script>
+  const stack=[]; const maxSize=6; let explored=false; let challengeDone=false; let quizDone=false;
+  const $=s=>document.querySelector(s); const $$=s=>document.querySelectorAll(s);
+  function openTab(id){ $$('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===id)); $$('.panel').forEach(p=>p.classList.toggle('active',p.id===id)); if(id==='learn')markProgress(); window.scrollTo({top:0,behavior:'smooth'}); }
+  $$('.tab').forEach(b=>b.addEventListener('click',()=>openTab(b.dataset.tab)));
+  function markProgress(){let n=25+(explored?25:0)+(quizDone?40:0)+(challengeDone?10:0); $('#progressBar').style.width=n+'%';$('#progressText').textContent=n+'%';}
+  function addLog(text){const line=document.createElement('div');line.textContent='> '+text;$('#log').appendChild(line);$('#log').scrollTop=$('#log').scrollHeight;}
+  function say(text,type=''){const m=$('#message');m.textContent=text;m.className='message '+type;}
+  function render(){const stage=$('#stackStage');stage.querySelectorAll('.item').forEach(e=>e.remove());stack.forEach((v,i)=>{const d=document.createElement('div');d.className='item'+(i===stack.length-1?' top':'');d.innerHTML='<span>'+escapeHtml(v)+'</span><span class="pos">'+(i===stack.length-1?'TOP':'位置 '+i)+'</span>';stage.appendChild(d)});$('#emptyState').classList.toggle('hidden',stack.length>0);$('#sizeBadge').textContent='Size: '+stack.length;}
+  function escapeHtml(s){return s.replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+  function push(){const input=$('#valueInput'),v=input.value.trim();if(!v){say('請先輸入一項資料。','error');return}if(stack.length>=maxSize){say('Stack Overflow（堆疊溢位／溢出）！堆疊已滿，不能再 Push（推入）。','error');addLog('PUSH 失敗：STACK OVERFLOW');return}stack.push(v);input.value='';render();say('已將「'+v+'」Push（推入）到頂部。','ok');addLog('PUSH（推入） '+v);explored=true;markProgress();input.focus();}
+  function pop(){if(!stack.length){say('Stack Underflow（堆疊下溢）！堆疊是空的，沒有資料可 Pop（彈出）。','error');addLog('POP 失敗：STACK UNDERFLOW');explored=true;markProgress();return}const v=stack.pop();render();say('已 Pop（彈出）「'+v+'」。它是最後推入的資料。','ok');addLog('POP（彈出） → '+v);explored=true;markProgress();}
+  function peek(){if(!stack.length){say('堆疊是空的，沒有頂部資料可 Peek（查看）。','error');addLog('PEEK（查看） → 空');return}say('頂部資料是「'+stack.at(-1)+'」。Peek（查看）不會把它移除。','ok');addLog('PEEK（查看） → '+stack.at(-1));explored=true;markProgress();}
+  function reset(){stack.length=0;render();say('堆疊已清空。');addLog('RESET');}
+  $('#pushBtn').onclick=push;$('#popBtn').onclick=pop;$('#peekBtn').onclick=peek;$('#resetBtn').onclick=reset;$('#valueInput').addEventListener('keydown',e=>{if(e.key==='Enter')push()});
+  $$('.answer').forEach(b=>b.onclick=()=>{const ok=b.dataset.answer==='乙';$('#challengeResult').textContent=ok?'✓ 正確！丙先被 Pop（彈出），頂部便是乙。':'再想想：最後推入的是丙，Pop（彈出）會先移除哪一項？';$('#challengeResult').style.color=ok?'var(--green)':'var(--red)';if(ok){challengeDone=true;markProgress()}});
+  const questions=[
+    {q:'堆疊採用哪一種資料取出次序？',o:['先進先出（FIFO）','後進先出（LIFO）','隨機取出'],a:1,e:'堆疊採用後進先出：最後加入的資料最先被取出。'},
+    {q:'哪個操作會在堆疊頂部加入資料？',o:['Push（推入）','Pop（彈出）','Peek（查看）'],a:0,e:'Push（推入）會把新資料加入堆疊頂部。'},
+    {q:'依次 Push（推入）A、B、C，再 Pop（彈出）一次，取出甚麼？',o:['A','B','C'],a:2,e:'C 最後推入，因此最先被 Pop（彈出）。'},
+    {q:'哪個操作只查看頂部資料，但不會移除它？',o:['Push（推入）','Peek（查看）','Pop（彈出）'],a:1,e:'Peek（查看）只讀取；Pop（彈出）才會移除。'},
+    {q:'對一個空堆疊執行 Pop（彈出），稱為甚麼？',o:['Stack Overflow（堆疊溢位／溢出）','Stack Underflow（堆疊下溢）','Loop（循環）'],a:1,e:'空堆疊沒有項目可彈出，這種錯誤稱為 Stack Underflow（堆疊下溢）。'},
+    {q:'以下哪項最適合使用堆疊？',o:['飯堂排隊','瀏覽器「返回上一頁」','按學號排序'],a:1,e:'最近到訪的頁面要最先返回，符合後進先出。'}
+  ];
+  let qi=0,correct=0,locked=false;
+  function loadQuestion(){locked=false;const q=questions[qi];$('#question').textContent=(qi+1)+'. '+q.q;$('#options').innerHTML='';q.o.forEach((txt,i)=>{const b=document.createElement('button');b.className='option';b.textContent=txt;b.onclick=()=>choose(i,b);$('#options').appendChild(b)});$('#feedback').textContent='選擇一個答案。';$('#nextBtn').classList.add('hidden');$('#score').textContent=correct+' / '+questions.length;}
+  function choose(i,b){if(locked)return;const q=questions[qi];if(i===q.a){locked=true;correct++;b.classList.add('correct');$('#feedback').textContent='✓ '+q.e;$('#score').textContent=correct+' / '+questions.length;$('#nextBtn').textContent=qi===questions.length-1?'查看結果 →':'下一題 →';$('#nextBtn').classList.remove('hidden')}else{b.classList.add('wrong');b.disabled=true;$('#feedback').textContent='✗ 未正確，再試一次。提示：'+q.e}}
+  $('#nextBtn').onclick=()=>{if(qi<questions.length-1){qi++;loadQuestion()}else{$('#quizPlay').classList.add('hidden');$('#finish').classList.remove('hidden');quizDone=true;markProgress()}};
+  $('#retryBtn').onclick=()=>{qi=0;correct=0;quizDone=false;$('#quizPlay').classList.remove('hidden');$('#finish').classList.add('hidden');loadQuestion();markProgress()};
+  render();loadQuestion();markProgress();
+</script>
+</body>
+</html>
